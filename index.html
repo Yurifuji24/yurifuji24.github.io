@@ -5,7 +5,7 @@
     <title>Consumo de Energia Elétrica no Brasil (2025)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- CSS global do site -->
+    <!-- CSS global do site (path absoluto - GitHub Pages safe) -->
     <link rel="stylesheet" href="/assets/css/style.css">
 
     <style>
@@ -13,15 +13,15 @@
             margin-bottom: 40px;
         }
 
+        .project-section {
+            margin-bottom: 40px;
+        }
+
         .project-images img {
             width: 100%;
             max-width: 900px;
             margin: 20px 0;
-            border-radius: 6px;
-        }
-
-        .project-section {
-            margin-bottom: 40px;
+            border-radius: 8px;
         }
 
         a.project-link {
@@ -29,8 +29,13 @@
             text-decoration: none;
             font-weight: bold;
         }
+
+        a.project-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
+
 <body>
 
 <header>
@@ -69,7 +74,7 @@
         <img src="./images/carga_media_por_subsistema.png" alt="Carga média por subsistema">
 
         <p><strong>Curva média diária por subsistema</strong></p>
-        <img src="./images/curva_diaria_por_subsistema.png" alt="Curva por subsistema">
+        <img src="./images/curva_diaria_por_subsistema.png" alt="Curva média diária por subsistema">
     </div>
 
     <div class="card project-section">
@@ -84,12 +89,21 @@
     <div class="card project-section">
         <h3>Materiais do Projeto</h3>
         <p>
-            🔗 <a class="project-link" href="https://github.com/yurifuji24/yurifuji24.github.io/tree/main/projects/consumo-energia-brasil" target="_blank">
-            Repositório completo no GitHub</a>
+            🔗
+            <a class="project-link"
+               href="https://github.com/yurifuji24/yurifuji24.github.io/tree/main/projects/consumo-energia-brasil"
+               target="_blank">
+                Repositório completo no GitHub
+            </a>
         </p>
+
         <p>
-            🔗 <a class="project-link" href="https://github.com/yurifu24/yurifuji24.github.io/blob/main/projects/consumo-energia-brasil/notebooks/consumo_energia_eda.ipynb" target="_blank">
-            Notebook de Análise (EDA)</a>
+            🔗
+            <a class="project-link"
+               href="https://github.com/yurifuji24/yurifuji24.github.io/blob/main/projects/consumo-energia-brasil/notebooks/consumo_energia_eda.ipynb"
+               target="_blank">
+                Notebook de Análise (EDA)
+            </a>
         </p>
     </div>
 
