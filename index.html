@@ -2,72 +2,101 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Yuri Vitorino | Data Analyst</title>
+    <title>Consumo de Energia Elétrica no Brasil (2025)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS global do site -->
+    <link rel="stylesheet" href="../../assets/css/style.css">
+
     <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #0f172a;
-            color: #e5e7eb;
+        .project-header {
+            margin-bottom: 40px;
         }
-        header {
-            padding: 60px 20px;
-            text-align: center;
-        }
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        h2 {
-            font-weight: 300;
-            color: #94a3b8;
-        }
-        section {
+
+        .project-images img {
+            width: 100%;
             max-width: 900px;
-            margin: auto;
-            padding: 40px 20px;
+            margin: 20px 0;
+            border-radius: 6px;
         }
-        .card {
-            background-color: #020617;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
+
+        .project-section {
+            margin-bottom: 40px;
         }
-        footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 0.9rem;
-            color: #64748b;
+
+        a.project-link {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Yuri Vitorino</h1>
-    <h2>Data Analyst | SQL • Python • Power BI</h2>
+    <h1>Consumo de Energia Elétrica no Brasil</h1>
+    <h2>Análise da Curva de Carga — 2025</h2>
 </header>
 
 <section>
-    <div class="card">
-        <h3>Sobre mim</h3>
+
+    <div class="card project-section project-header">
+        <h3>Contexto</h3>
         <p>
-            Estudante de Análise e Desenvolvimento de Sistemas com foco em
-            Análise de Dados. Experiência com SQL, Python, Excel e Power BI,
-            atuando com dados e indicadores no mercado de energia.
+            Este projeto analisa o comportamento da carga de energia elétrica
+            no Sistema Interligado Nacional (SIN), utilizando dados horários
+            oficiais disponibilizados pelo Operador Nacional do Sistema Elétrico (ONS).
         </p>
     </div>
 
-    <div class="card">
-        <h3>Projetos</h3>
-        <p>Em breve: análises de dados aplicadas ao setor energético.</p>
+    <div class="card project-section">
+        <h3>Perguntas de Negócio</h3>
+        <ul>
+            <li>Qual é o padrão médio de consumo ao longo do dia?</li>
+            <li>Quais subsistemas concentram maior carga elétrica?</li>
+            <li>Em quais horários ocorrem os picos de consumo?</li>
+            <li>Há diferença de comportamento entre dias úteis e fins de semana?</li>
+        </ul>
     </div>
+
+    <div class="card project-section project-images">
+        <h3>Principais Visualizações</h3>
+
+        <p><strong>Curva média diária de carga (Brasil)</strong></p>
+        <img src="images/curva_media_diaria_brasil.png" alt="Curva média diária de carga">
+
+        <p><strong>Carga média por subsistema</strong></p>
+        <img src="images/carga_media_por_subsistema.png" alt="Carga média por subsistema">
+
+        <p><strong>Curva média diária por subsistema</strong></p>
+        <img src="images/curva_diaria_por_subsistema.png" alt="Curva por subsistema">
+    </div>
+
+    <div class="card project-section">
+        <h3>Principais Insights</h3>
+        <ul>
+            <li>O subsistema SE/CO concentra a maior parcela da carga elétrica do SIN.</li>
+            <li>Os picos de consumo ocorrem majoritariamente no período noturno.</li>
+            <li>Aos fins de semana, observa-se redução significativa da carga média.</li>
+        </ul>
+    </div>
+
+    <div class="card project-section">
+        <h3>Materiais do Projeto</h3>
+        <p>
+            🔗 <a class="project-link" href="https://github.com/yurifuji24/yurifuji24.github.io/tree/main/projects/consumo-energia-brasil" target="_blank">
+            Repositório completo no GitHub</a>
+        </p>
+        <p>
+            🔗 <a class="project-link" href="https://github.com/yurifu24/yurifuji24.github.io/blob/main/projects/consumo-energia-brasil/notebooks/consumo_energia_eda.ipynb" target="_blank">
+            Notebook de Análise (EDA)</a>
+        </p>
+    </div>
+
 </section>
 
 <footer>
-    © 2025 • Portfólio Profissional
+    © 2025 • Projeto de Análise de Dados
 </footer>
 
 </body>
