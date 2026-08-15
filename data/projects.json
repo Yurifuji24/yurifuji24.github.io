@@ -1,0 +1,42 @@
+{
+  "_leiame": [
+    "Esta é a única fonte de verdade da lista de projetos da home.",
+    "Para publicar um projeto novo: copie projects/_template/ para projects/<slug>/,",
+    "edite o index.html de lá e acrescente um objeto no array 'projects' abaixo.",
+    "Campos: slug, url, title, summary, category, categoryLabel, tags, date, status, cover, links.",
+    "status aceita: destaque | concluido | andamento (usado no selo do card).",
+    "Projetos aparecem na home na ordem em que estão neste array."
+  ],
+
+  "projects": [
+    {
+      "slug": "consumo-energia-brasil",
+      "url": "projects/consumo-energia-brasil/",
+      "title": {
+        "pt": "Curva de carga de energia elétrica no Brasil",
+        "en": "Electricity load curve in Brazil"
+      },
+      "summary": {
+        "pt": "Análise exploratória de 34 mil registros horários do ONS para mapear o perfil de consumo do Sistema Interligado Nacional: horário de pico, peso de cada subsistema e queda de carga no fim de semana.",
+        "en": "Exploratory analysis of 34k hourly records from the Brazilian grid operator (ONS), mapping the national demand profile: peak hour, weight of each subsystem and weekend load drop."
+      },
+      "category": "data-analysis",
+      "categoryLabel": {
+        "pt": "Análise de dados",
+        "en": "Data analysis"
+      },
+      "tags": ["Python", "pandas", "matplotlib", "EDA", "Energia"],
+      "date": "2025-12",
+      "status": "destaque",
+      "cover": "projects/consumo-energia-brasil/images/curva_media_diaria_brasil.png",
+      "coverAlt": {
+        "pt": "Gráfico da curva média diária de carga do SIN em 2025",
+        "en": "Chart of the average daily load curve of the Brazilian grid in 2025"
+      },
+      "links": {
+        "repo": "https://github.com/Yurifuji24/yurifuji24.github.io/tree/main/projects/consumo-energia-brasil",
+        "notebook": "https://github.com/Yurifuji24/yurifuji24.github.io/blob/main/projects/consumo-energia-brasil/notebooks/consumo_energia_eda.ipynb"
+      }
+    }
+  ]
+}

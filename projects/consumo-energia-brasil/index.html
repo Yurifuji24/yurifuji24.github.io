@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Curva de carga de energia elétrica no Brasil — Yuri Vitorino</title>
+<meta name="description" content="Análise exploratória de 34 mil registros horários do ONS: perfil de consumo do Sistema Interligado Nacional, horário de pico, peso de cada subsistema e queda de carga no fim de semana.">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Curva de carga de energia elétrica no Brasil">
+<meta property="og:description" content="Análise exploratória de 34 mil registros horários do ONS sobre o consumo de energia no Brasil.">
+<meta property="og:url" content="https://yurifuji24.github.io/projects/consumo-energia-brasil/">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2338bdf8'/><text x='16' y='22' font-family='monospace' font-size='16' font-weight='700' text-anchor='middle' fill='%2304121f'>YV</text></svg>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="../../assets/css/style.css">
+
+<script>
+  (function () {
+    var saved = null;
+    try { saved = localStorage.getItem("portfolio:theme"); } catch (e) {}
+    var prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+    document.documentElement.setAttribute("data-theme", saved || (prefersLight ? "light" : "dark"));
+  })();
+</script>
+<script src="../../assets/js/i18n.js"></script>
+</head>
+
+<body>
+<a class="skip-link" href="#conteudo" data-pt="Pular para o conteúdo" data-en="Skip to content">Pular para o conteúdo</a>
+
+<header class="site-header" data-header>
+  <div class="container">
+    <a class="brand" href="../../">
+      <span class="brand__mark" aria-hidden="true">YV</span>
+      <span>Yuri Vitorino</span>
+    </a>
+
+    <nav class="nav" data-nav aria-label="Menu principal">
+      <a href="../../#sobre" data-i18n="nav.about">Sobre</a>
+      <a href="../../#projetos" data-i18n="nav.projects">Projetos</a>
+      <a href="../../#contato" data-i18n="nav.contact">Contato</a>
+    </nav>
+
+    <div class="header-tools">
+      <div class="lang-switch" role="group" aria-label="Idioma / Language">
+        <button type="button" data-lang-btn="pt" aria-pressed="true">PT</button>
+        <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
+      </div>
+
+      <button type="button" class="icon-btn" data-theme-toggle data-i18n-aria-label="nav.theme" aria-label="Alternar tema claro/escuro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+        </svg>
+      </button>
+
+      <button type="button" class="icon-btn nav-toggle" data-nav-toggle aria-expanded="false" data-i18n-aria-label="nav.menu" aria-label="Abrir menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="conteudo">
+
+  <!-- ================= CAPA DO CASE ================= -->
+  <section class="case-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../" data-i18n="nav.home">Início</a>
+        <span aria-hidden="true">/</span>
+        <a href="../../#projetos" data-i18n="nav.projects">Projetos</a>
+        <span aria-hidden="true">/</span>
+        <span data-pt="Curva de carga" data-en="Load curve">Curva de carga</span>
+      </nav>
+
+      <p class="eyebrow" data-pt="Análise de dados · 2025" data-en="Data analysis · 2025">Análise de dados · 2025</p>
+      <h1 data-pt="Curva de carga de energia elétrica no Brasil"
+          data-en="Electricity load curve in Brazil">Curva de carga de energia elétrica no Brasil</h1>
+
+      <p class="lead" data-lang="pt">
+        Quando o Brasil consome mais energia, e quem consome? Analisei 34 mil registros
+        horários do ONS para desenhar o perfil de demanda do Sistema Interligado Nacional
+        e transformar isso em quatro conclusões operacionais.
+      </p>
+      <p class="lead" data-lang="en">
+        When does Brazil consume the most electricity, and who consumes it? I analysed 34k
+        hourly records from the national grid operator (ONS) to draw the demand profile of
+        the interconnected system and turn it into four operational conclusions.
+      </p>
+
+      <div class="hero__actions">
+        <a class="btn btn--ghost" href="notebooks/consumo_energia_eda.ipynb">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5"/></svg>
+          <span data-i18n="cta.notebook">Notebook</span>
+        </a>
+        <a class="btn btn--ghost" href="https://github.com/Yurifuji24/yurifuji24.github.io/tree/main/projects/consumo-energia-brasil" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a12 12 0 0 0-3.79 23.4c.6.1.82-.26.82-.58v-2.2c-3.34.72-4.04-1.42-4.04-1.42-.55-1.4-1.34-1.77-1.34-1.77-1.1-.75.08-.73.08-.73 1.21.09 1.85 1.25 1.85 1.25 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.96 0-1.32.47-2.39 1.24-3.23-.12-.31-.54-1.53.12-3.18 0 0 1.01-.32 3.3 1.23a11.4 11.4 0 0 1 6.01 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.87.12 3.18.77.84 1.24 1.91 1.24 3.23 0 4.63-2.8 5.65-5.48 5.95.43.37.81 1.1.81 2.22v3.29c0 .32.21.69.83.57A12 12 0 0 0 12 .5Z"/></svg>
+          <span data-i18n="cta.repo">Repositório</span>
+        </a>
+      </div>
+
+      <dl class="case-facts">
+        <div class="case-fact">
+          <dt data-pt="Fonte" data-en="Source">Fonte</dt>
+          <dd>ONS</dd>
+        </div>
+        <div class="case-fact">
+          <dt data-pt="Período" data-en="Period">Período</dt>
+          <dd data-fact="periodo">—</dd>
+        </div>
+        <div class="case-fact">
+          <dt data-pt="Registros" data-en="Records">Registros</dt>
+          <dd data-fact="registros">—</dd>
+        </div>
+        <div class="case-fact">
+          <dt data-pt="Granularidade" data-en="Granularity">Granularidade</dt>
+          <dd data-pt="Horária, por subsistema" data-en="Hourly, per subsystem">Horária, por subsistema</dd>
+        </div>
+        <div class="case-fact">
+          <dt data-pt="Ferramentas" data-en="Tools">Ferramentas</dt>
+          <dd>Python · pandas · matplotlib</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ================= NÚMEROS ================= -->
+  <section class="section" id="numeros">
+    <div class="container">
+      <div class="section__head">
+        <p class="eyebrow" data-pt="Em números" data-en="By the numbers">Em números</p>
+        <h2 data-pt="O retrato de 2025" data-en="The 2025 snapshot">O retrato de 2025</h2>
+      </div>
+
+      <div class="kpi-grid" data-kpis>
+        <div class="kpi kpi--accent">
+          <p class="kpi__value" data-kpi="carga_media">—</p>
+          <p class="kpi__label" data-pt="Carga média do SIN" data-en="Average national load">Carga média do SIN</p>
+        </div>
+        <div class="kpi kpi--amber">
+          <p class="kpi__value" data-kpi="hora_pico">—</p>
+          <p class="kpi__label" data-kpi-label="hora_pico" data-pt="Horário de pico médio" data-en="Average peak hour">Horário de pico médio</p>
+        </div>
+        <div class="kpi kpi--violet">
+          <p class="kpi__value" data-kpi="share">—</p>
+          <p class="kpi__label" data-pt="Da carga vem do Sudeste/CO" data-en="Of the load comes from the Southeast/CW">Da carga vem do Sudeste/CO</p>
+        </div>
+        <div class="kpi kpi--green">
+          <p class="kpi__value" data-kpi="fds">—</p>
+          <p class="kpi__label" data-pt="Queda de carga no fim de semana" data-en="Weekend load drop">Queda de carga no fim de semana</p>
+        </div>
+      </div>
+
+      <div class="callout">
+        <span aria-hidden="true">💡</span>
+        <span data-lang="pt">
+          Os gráficos abaixo são interativos e desenhados a partir de um resumo do dataset
+          (8&nbsp;KB), gerado pelo script <code>scripts/build_aggregates.py</code>. A base
+          completa de 1,8&nbsp;MB fica no repositório, sem pesar no carregamento da página.
+        </span>
+        <span data-lang="en">
+          The charts below are interactive and drawn from an 8&nbsp;KB summary of the dataset,
+          produced by <code>scripts/build_aggregates.py</code>. The full 1.8&nbsp;MB dataset
+          lives in the repository without slowing the page down.
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= GRÁFICOS ================= -->
+  <section class="section section--alt" id="analise">
+    <div class="container">
+      <div class="section__head">
+        <p class="eyebrow" data-pt="Análise" data-en="Analysis">Análise</p>
+        <h2 data-pt="Como o Brasil consome ao longo do dia" data-en="How Brazil consumes through the day">Como o Brasil consome ao longo do dia</h2>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-card__head">
+          <h3 data-pt="Curva média diária do SIN" data-en="Average daily load curve">Curva média diária do SIN</h3>
+          <p data-pt="Média horária da carga somada dos quatro subsistemas, em MW."
+             data-en="Hourly average of the load summed across the four subsystems, in MW.">Média horária da carga somada dos quatro subsistemas, em MW.</p>
+        </div>
+        <div class="chart-frame" data-chart="curva-sin"></div>
+      </div>
+
+      <div class="chart-grid-2">
+        <div class="chart-card">
+          <div class="chart-card__head">
+            <h3 data-pt="Carga média por subsistema" data-en="Average load per subsystem">Carga média por subsistema</h3>
+            <p data-pt="Média anual de cada subsistema, em MW."
+               data-en="Annual average per subsystem, in MW.">Média anual de cada subsistema, em MW.</p>
+          </div>
+          <div class="chart-frame" data-chart="subsistemas"></div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-card__head">
+            <h3 data-pt="Sazonalidade mensal" data-en="Monthly seasonality">Sazonalidade mensal</h3>
+            <p data-pt="Carga média do SIN em cada mês de 2025."
+               data-en="Average national load for each month of 2025.">Carga média do SIN em cada mês de 2025.</p>
+          </div>
+          <div class="chart-frame" data-chart="mensal"></div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-card__head">
+          <h3 data-pt="Curva diária por subsistema" data-en="Daily curve per subsystem">Curva diária por subsistema</h3>
+          <p data-pt="O mesmo perfil horário, separado por região — as amplitudes são bem diferentes."
+             data-en="The same hourly profile, split by region — the amplitudes differ sharply.">O mesmo perfil horário, separado por região — as amplitudes são bem diferentes.</p>
+        </div>
+        <div class="chart-frame" data-chart="curva-subsistemas"></div>
+        <div class="chart-legend" data-legend="curva-subsistemas"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-card__head">
+          <h3 data-pt="Hora × dia da semana" data-en="Hour × day of week">Hora × dia da semana</h3>
+          <p data-pt="Quanto mais intensa a cor, maior a carga média naquela hora e naquele dia."
+             data-en="The more intense the colour, the higher the average load at that hour and day.">Quanto mais intensa a cor, maior a carga média naquela hora e naquele dia.</p>
+        </div>
+        <div class="chart-frame" data-chart="heatmap"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= INSIGHTS ================= -->
+  <section class="section" id="conclusoes">
+    <div class="container">
+      <div class="section__head">
+        <p class="eyebrow" data-pt="Conclusões" data-en="Findings">Conclusões</p>
+        <h2 data-pt="O que os dados dizem" data-en="What the data says">O que os dados dizem</h2>
+      </div>
+
+      <ol class="insight-list" data-lang="pt">
+        <li>
+          <strong>O pico é às 19h e custa caro.</strong> A carga sobe de ~68,5&nbsp;GW na
+          madrugada para ~90&nbsp;GW no início da noite — uma variação de 31% dentro do mesmo
+          dia. É essa amplitude que obriga o sistema a manter geração cara em reserva.
+        </li>
+        <li>
+          <strong>Sudeste/CO concentra 55% de toda a carga.</strong> Sozinho, o subsistema
+          consome mais que os outros três somados. Qualquer política de eficiência com efeito
+          relevante no SIN passa obrigatoriamente por ele.
+        </li>
+        <li>
+          <strong>Norte e Nordeste têm curva quase plana.</strong> A diferença entre o vale e o
+          pico é bem menor que no Sudeste/CO — perfil típico de carga industrial e de clima,
+          menos sensível à rotina residencial noturna.
+        </li>
+        <li>
+          <strong>O fim de semana derruba a carga em 10,8%.</strong> A queda é consistente e
+          previsível, o que a torna útil para planejar manutenção programada e para separar
+          o efeito "calendário" do efeito "clima" em qualquer previsão de demanda.
+        </li>
+      </ol>
+
+      <ol class="insight-list" data-lang="en">
+        <li>
+          <strong>The peak is at 7pm, and it is expensive.</strong> Load climbs from ~68.5&nbsp;GW
+          overnight to ~90&nbsp;GW in the early evening — a 31% swing within the same day. That
+          amplitude is what forces the system to keep costly generation on reserve.
+        </li>
+        <li>
+          <strong>The Southeast/Central-West holds 55% of all load.</strong> On its own, the
+          subsystem consumes more than the other three combined. Any efficiency policy with a
+          meaningful national effect has to go through it.
+        </li>
+        <li>
+          <strong>North and Northeast have a nearly flat curve.</strong> The gap between trough
+          and peak is far smaller than in the Southeast — a profile typical of industrial and
+          climate-driven load, less sensitive to the evening residential routine.
+        </li>
+        <li>
+          <strong>Weekends cut load by 10.8%.</strong> The drop is consistent and predictable,
+          which makes it useful for scheduling planned maintenance and for separating the
+          "calendar" effect from the "weather" effect in any demand forecast.
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= MÉTODO ================= -->
+  <section class="section section--alt" id="metodo">
+    <div class="container">
+      <div class="section__head">
+        <p class="eyebrow" data-pt="Bastidores" data-en="Behind the scenes">Bastidores</p>
+        <h2 data-pt="Método e decisões" data-en="Method and decisions">Método e decisões</h2>
+      </div>
+
+      <div class="about">
+        <div class="prose" data-lang="pt">
+          <h2>Do CSV bruto à análise</h2>
+          <p>
+            A base do ONS vem em CSV com separador <code>;</code> e codificação
+            <code>latin-1</code>, com uma linha por subsistema por hora. O tratamento foi curto
+            e deliberado:
+          </p>
+          <ul>
+            <li>Conversão de <code>din_instante</code> para <code>datetime</code>, para poder derivar hora, dia e mês.</li>
+            <li>Renomeação das colunas técnicas do ONS para nomes legíveis (<code>val_cargaenergiahomwmed</code> → <code>carga_mw_media</code>).</li>
+            <li>Criação das dimensões de tempo: hora, dia, mês e dia da semana ordenado como categoria.</li>
+          </ul>
+
+          <h2>Uma decisão que muda o resultado</h2>
+          <p>
+            A carga do SIN <strong>não</strong> é a média das linhas da tabela: cada instante
+            tem quatro linhas, uma por subsistema. Tirar a média direto daria a carga média de
+            um subsistema típico, não a do país. O agregado correto é somar os subsistemas
+            dentro de cada instante e só então tirar a média por hora — é o que o script de
+            agregação faz.
+          </p>
+
+          <h2>Limitações</h2>
+          <ul>
+            <li>A base cobre 2025 até 22 de dezembro; o fechamento do ano ainda não estava disponível.</li>
+            <li>A análise é descritiva: não separa efeito de temperatura, feriado ou atividade econômica.</li>
+            <li>Sem ajuste de fuso horário por subsistema — o ONS já publica em horário de Brasília.</li>
+          </ul>
+        </div>
+
+        <div class="prose" data-lang="en">
+          <h2>From raw CSV to analysis</h2>
+          <p>
+            The ONS dataset ships as a <code>;</code>-separated CSV in <code>latin-1</code>,
+            with one row per subsystem per hour. Cleaning was short and deliberate:
+          </p>
+          <ul>
+            <li>Casting <code>din_instante</code> to <code>datetime</code> so hour, day and month could be derived.</li>
+            <li>Renaming the ONS technical columns to readable ones (<code>val_cargaenergiahomwmed</code> → <code>carga_mw_media</code>).</li>
+            <li>Building the time dimensions: hour, day, month and weekday as an ordered category.</li>
+          </ul>
+
+          <h2>One decision that changes the result</h2>
+          <p>
+            National load is <strong>not</strong> the mean of the table's rows: every timestamp
+            has four rows, one per subsystem. Averaging directly would give the average load of
+            a typical subsystem, not of the country. The correct aggregate sums the subsystems
+            within each timestamp and only then averages by hour — which is what the
+            aggregation script does.
+          </p>
+
+          <h2>Limitations</h2>
+          <ul>
+            <li>The dataset covers 2025 through 22 December; the year-end close was not yet available.</li>
+            <li>The analysis is descriptive: it does not isolate temperature, holiday or economic activity effects.</li>
+            <li>No per-subsystem timezone adjustment — ONS already publishes in Brasília time.</li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="chart-card">
+            <div class="chart-card__head">
+              <h3 data-pt="Pipeline" data-en="Pipeline">Pipeline</h3>
+            </div>
+            <ol class="prose" style="padding-left:1.1em;color:var(--text-muted);font-size:0.92rem">
+              <li data-pt="CSV bruto do ONS (1,35 MB)" data-en="Raw ONS CSV (1.35 MB)">CSV bruto do ONS (1,35 MB)</li>
+              <li data-pt="Notebook de EDA (pandas)" data-en="EDA notebook (pandas)">Notebook de EDA (pandas)</li>
+              <li data-pt="CSV tratado (1,86 MB)" data-en="Cleaned CSV (1.86 MB)">CSV tratado (1,86 MB)</li>
+              <li data-pt="Agregados JSON (8 KB)" data-en="JSON aggregates (8 KB)">Agregados JSON (8 KB)</li>
+              <li data-pt="Gráficos desta página" data-en="Charts on this page">Gráficos desta página</li>
+            </ol>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-card__head">
+              <h3 data-pt="Arquivos do projeto" data-en="Project files">Arquivos do projeto</h3>
+            </div>
+            <ul class="prose" style="padding-left:1.1em;font-size:0.92rem">
+              <li><a href="notebooks/consumo_energia_eda.ipynb">notebooks/consumo_energia_eda.ipynb</a></li>
+              <li><a href="data/raw/CURVA_CARGA_2025.csv">data/raw/CURVA_CARGA_2025.csv</a></li>
+              <li><a href="data/processed/curva_carga_2025_tratada.csv">data/processed/curva_carga_2025_tratada.csv</a></li>
+              <li><a href="data/aggregated/curva_carga.json">data/aggregated/curva_carga.json</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+    <nav class="case-nav">
+      <a class="btn btn--ghost" href="../../#projetos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+        <span data-i18n="cta.allProjects">Todos os projetos</span>
+      </a>
+      <a class="btn btn--primary" href="../../#contato">
+        <span data-pt="Falar comigo" data-en="Get in touch">Falar comigo</span>
+      </a>
+    </nav>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <span>© <span data-year>2025</span> Yuri Vitorino</span>
+    <span data-pt="Dados: ONS — Operador Nacional do Sistema Elétrico"
+          data-en="Data: ONS — Brazilian national grid operator">Dados: ONS — Operador Nacional do Sistema Elétrico</span>
+    <a href="https://github.com/Yurifuji24/yurifuji24.github.io" target="_blank" rel="noopener" data-i18n="footer.source">Código-fonte</a>
+  </div>
+</footer>
+
+<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/charts.js"></script>
+<script>
+/* Liga o JSON de agregados aos KPIs e aos gráficos desta página. */
+(function () {
+  "use strict";
+
+  var SUB_LABELS = {
+    SUDESTE: { pt: "Sudeste/CO", en: "Southeast/CW" },
+    SUL: { pt: "Sul", en: "South" },
+    NORDESTE: { pt: "Nordeste", en: "Northeast" },
+    NORTE: { pt: "Norte", en: "North" },
+  };
+
+  var data = null;
+
+  function locale() {
+    return window.i18n.lang === "pt" ? "pt-BR" : "en-US";
+  }
+
+  function num(value, digits) {
+    return Number(value).toLocaleString(locale(), {
+      minimumFractionDigits: digits || 0,
+      maximumFractionDigits: digits || 0,
+    });
+  }
+
+  function subLabel(name) {
+    var entry = SUB_LABELS[name];
+    return entry ? entry[window.i18n.lang] : name;
+  }
+
+  function formatMW(value) {
+    return num(value) + " MW";
+  }
+
+  function formatGW(value) {
+    return num(value / 1000, 1) + " GW";
+  }
+
+  function fill(selector, text) {
+    var node = document.querySelector(selector);
+    if (node) node.textContent = text;
+  }
+
+  function renderFacts() {
+    var meta = data.meta;
+    var start = meta.periodo.inicio.split("-");
+    var end = meta.periodo.fim.split("-");
+    var pt = window.i18n.lang === "pt";
+    fill(
+      '[data-fact="periodo"]',
+      pt
+        ? start[2] + "/" + start[1] + "/" + start[0] + " – " + end[2] + "/" + end[1] + "/" + end[0]
+        : start[1] + "/" + start[2] + "/" + start[0] + " – " + end[1] + "/" + end[2] + "/" + end[0]
+    );
+    fill('[data-fact="registros"]', num(meta.registros));
+  }
+
+  function renderKpis() {
+    var k = data.kpis;
+    fill('[data-kpi="carga_media"]', formatGW(k.carga_media_sin));
+    fill('[data-kpi="hora_pico"]', k.hora_pico + "h");
+    fill('[data-kpi="share"]', num(k.share_sudeste_pct, 1) + "%");
+    fill('[data-kpi="fds"]', "−" + num(k.queda_fim_semana_pct, 1) + "%");
+
+    var peakLabel = document.querySelector('[data-kpi-label="hora_pico"]');
+    if (peakLabel) {
+      peakLabel.textContent =
+        (window.i18n.lang === "pt" ? "Horário de pico médio · " : "Average peak hour · ") +
+        formatGW(k.pico_medio);
+    }
+  }
+
+  function renderCharts() {
+    var horas = data.curva_sin.horas.map(function (h) {
+      return h + "h";
+    });
+
+    Charts.line(document.querySelector('[data-chart="curva-sin"]'), {
+      labels: horas,
+      series: [{ name: "SIN", values: data.curva_sin.carga_mw }],
+      formatValue: formatGW,
+      labelEvery: 2,
+      ariaLabel:
+        window.i18n.lang === "pt"
+          ? "Curva média diária de carga do SIN, com pico às " + data.kpis.hora_pico + " horas"
+          : "Average daily load curve, peaking at " + data.kpis.hora_pico + ":00",
+    });
+
+    Charts.bars(document.querySelector('[data-chart="subsistemas"]'), {
+      items: data.media_por_subsistema.map(function (item) {
+        return { label: subLabel(item.nome), value: item.carga_mw };
+      }),
+      formatValue: formatGW,
+    });
+
+    var meses = data.sazonalidade_mensal[window.i18n.lang === "pt" ? "meses_pt" : "meses_en"];
+    Charts.line(document.querySelector('[data-chart="mensal"]'), {
+      labels: meses,
+      series: [{ name: "SIN", values: data.sazonalidade_mensal.carga_mw, color: "var(--amber)" }],
+      formatValue: formatGW,
+      labelEvery: 1,
+      height: 260,
+    });
+
+    var series = data.curva_por_subsistema.series.map(function (item) {
+      return { name: subLabel(item.nome), values: item.carga_mw };
+    });
+    Charts.line(document.querySelector('[data-chart="curva-subsistemas"]'), {
+      labels: horas,
+      series: series,
+      formatValue: formatGW,
+      labelEvery: 2,
+      area: false,
+    });
+
+    var legend = document.querySelector('[data-legend="curva-subsistemas"]');
+    if (legend) {
+      legend.innerHTML = series
+        .map(function (item, index) {
+          var color = Charts.palette[index % Charts.palette.length];
+          return (
+            '<span><i style="background:' + color + '"></i>' + item.name + "</span>"
+          );
+        })
+        .join("");
+    }
+
+    var heat = data.heatmap_semana;
+    Charts.heatmap(document.querySelector('[data-chart="heatmap"]'), {
+      rows: heat[window.i18n.lang === "pt" ? "dias_pt" : "dias_en"],
+      cols: heat.horas.map(function (h) {
+        return h + "h";
+      }),
+      values: heat.valores,
+      formatValue: formatGW,
+    });
+  }
+
+  function renderAll() {
+    if (!data) return;
+    renderFacts();
+    renderKpis();
+    renderCharts();
+  }
+
+  document.addEventListener("langchange", renderAll);
+
+  fetch("data/aggregated/curva_carga.json", { cache: "no-cache" })
+    .then(function (response) {
+      if (!response.ok) throw new Error("HTTP " + response.status);
+      return response.json();
+    })
+    .then(function (payload) {
+      data = payload;
+      renderAll();
+    })
+    .catch(function (error) {
+      console.error("[case] não foi possível carregar os agregados", error);
+      document.querySelectorAll(".chart-frame").forEach(function (frame) {
+        frame.innerHTML =
+          '<p class="empty-state">' +
+          (window.i18n.lang === "pt"
+            ? "Gráficos indisponíveis: rode o site em um servidor local (python -m http.server)."
+            : "Charts unavailable: serve the site locally (python -m http.server).") +
+          "</p>";
+      });
+    });
+})();
+</script>
+</body>
+</html>
